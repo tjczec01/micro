@@ -73,17 +73,22 @@ https://doi.org/10.1021/acs.chemrev.0c00394
 main_dict = {}
 main_list = []
 
-names = ["diethy ether", "ethylene", "ethanol", "ethoxythanol", "acetaldehyde", "ethyl acetate", "acetic acid", 
-         "acetone", "3-hydroxybutanol", "butanone", "1,3-butanediol", "crotonaldehyde", "crotyl alcohol", "1,3-butadiene", 
-         "butyraldehyde", "1-butanol", "1-butene", "(2E)-2-butene", "isobutylene", "carbon dioxide", "water"]
+temps = [450, 425, 400, 375]
+
+tempsk = [i + 273.15 for i in temps]
+
+
+names = ["diethy_ether", "ethylene", "ethanol", "ethoxythanol", "acetaldehyde", "ethyl_acetate", "acetic_acid", 
+         "acetone", "3-hydroxybutanol", "butanone", "1,3-butanediol", "crotonaldehyde", "crotyl_alcohol", "1,3-butadiene", 
+         "butyraldehyde", "1-butanol", "1-butene", "(2E)-2-butene", "isobutylene", "carbon_dioxide", "water", "hydrogen", "oxygen"]
 
 cas_nums = ["60-29-7", "74-85-1", "64-17-5", "7518-70-9", "75-07-0", "141-78-6", "64-19-7", 
             "67-64-1", "107-89-1", "78-93-3", "107-88-0", "123-73-9", "6117-91-5", "106-99-0", 
-            "123-72-8", "71-36-3", "106-98-9", "107-01-7", "115-11-7", "124-38-9", "7732-18-5"]
+            "123-72-8", "71-36-3", "106-98-9", "107-01-7", "115-11-7", "124-38-9", "7732-18-5", "1333-74-0", "7782-44-7"]
 
 molecular_forms =["C4H10O", "C2H4", "C2H6O", "C4H10O2", "C2H4O", "C4H8O2", "C2H4O2", 
                   "C3H6O", "C4H8O2", "C4H8O", "C4H10O2", "C4H6O", "C4H8O", "C4H6", 
-                  "C4H8O", "C4H10O", "C4H8", "C4H8", "C4H8", "CO2", "H2O"]
+                  "C4H8O", "C4H10O", "C4H8", "C4H8", "C4H8", "CO2", "H2O", "H2", "O2"]
 
 # for i in range(len(names)):
 #     main_dict[i] = {'Name': '{}'.format(names[i]), 'CAS': '{}'.format(cas_nums[i]), "Molecular Formula": '{}'.format(molecular_forms[i])}
@@ -136,17 +141,20 @@ final_list = [{'Name': 'diethy ether', 'CAS': '60-29-7', 'Molecular Formula': 'C
               {'Name': 'carbon dioxide', 'CAS': '124-38-9', 'Molecular Formula': 'CO2'}, 
               {'Name': 'water', 'CAS': '7732-18-5', 'Molecular Formula': 'H2O'}]
 
-k_b = [1.380649*(10**23),           #	J/K Boltzmann constant (m**2 kg)/(s**2 K1)
+
+
+k_b = [1.380649*(10**-23),           #	J/K Boltzmann constant (m**2 kg)/(s**2 K1)
        8.617333262145*(10**5),      #	eV/K
        1.380649*(10**16)]           #	erg/K
 
-h_p = [6.62607015*(10**34),         #  J⋅s Plank's constant
+h_p = [6.62607015*(10**-34),         #  J⋅s Plank's constant
        4.135667696*(10**15)]        #  eV⋅s
 
 N_a = 6.02214076*(10**23)           #  mol**1 Avogadro constant
 
 R_g = [8.31446261815324,            #  J/(K⋅mol)  Gas Constant
-       8.20573660809596*(10**-5)]   #  (m3⋅atm)/(K⋅mol)
+       8.20573660809596*(10**-5),   #  (m3⋅atm)/(K⋅mol)
+       1.987]                       # cal/(K mol)
 
 π = 3.14159265359
 
