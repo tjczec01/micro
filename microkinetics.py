@@ -8,6 +8,8 @@ Github: https://github.com/tjczec01
 
 E-mail: tjczec01@gmail.com
 
+Website: https://github.com/tjczec01/micro
+
 """
 
 import math
@@ -62,11 +64,79 @@ RDS = rate-determining step
 ΔBE_ref = the change in the binding energy of the descriptor from the reference surface 
 χ_TS = the slope in the linear relationship between the transition state and the descriptor
 
+Paper Used: Microkinetic Modeling: A Tool for Rational Catalyst Design
+
+https://doi.org/10.1021/acs.chemrev.0c00394  
+
 """
 
+main_dict = {}
+main_list = []
 
+names = ["diethy ether", "ethylene", "ethanol", "ethoxythanol", "acetaldehyde", "ethyl acetate", "acetic acid", 
+         "acetone", "3-hydroxybutanol", "butanone", "1,3-butanediol", "crotonaldehyde", "crotyl alcohol", "1,3-butadiene", 
+         "butyraldehyde", "1-butanol", "1-butene", "(2E)-2-butene", "isobutylene", "carbon dioxide", "water"]
 
-k_b = [1.380649*(10**23),           #	J/K Boltzmann constant
+cas_nums = ["60-29-7", "74-85-1", "64-17-5", "7518-70-9", "75-07-0", "141-78-6", "64-19-7", 
+            "67-64-1", "107-89-1", "78-93-3", "107-88-0", "123-73-9", "6117-91-5", "106-99-0", 
+            "123-72-8", "71-36-3", "106-98-9", "107-01-7", "115-11-7", "124-38-9", "7732-18-5"]
+
+molecular_forms =["C4H10O", "C2H4", "C2H6O", "C4H10O2", "C2H4O", "C4H8O2", "C2H4O2", 
+                  "C3H6O", "C4H8O2", "C4H8O", "C4H10O2", "C4H6O", "C4H8O", "C4H6", 
+                  "C4H8O", "C4H10O", "C4H8", "C4H8", "C4H8", "CO2", "H2O"]
+
+# for i in range(len(names)):
+#     main_dict[i] = {'Name': '{}'.format(names[i]), 'CAS': '{}'.format(cas_nums[i]), "Molecular Formula": '{}'.format(molecular_forms[i])}
+#     main_list.append({'Name': '{}'.format(names[i]), 'CAS': '{}'.format(cas_nums[i]), "Molecular Formula": '{}'.format(molecular_forms[i])})
+    
+# print(main_dict)
+# print(main_list)
+
+final_dict =    {0: {'Name': 'diethy ether', 'CAS': '60-29-7', 'Molecular Formula': 'C4H10O'}, 
+                 1: {'Name': 'ethylene', 'CAS': '74-85-1', 'Molecular Formula': 'C2H4'}, 
+                 2: {'Name': 'ethanol', 'CAS': '64-17-5', 'Molecular Formula': 'C2H6O'}, 
+                 3: {'Name': 'ethoxythanol', 'CAS': '7518-70-9', 'Molecular Formula': 'C4H10O2'}, 
+                 4: {'Name': 'acetaldehyde', 'CAS': '75-07-0', 'Molecular Formula': 'C2H4O'}, 
+                 5: {'Name': 'ethyl acetate', 'CAS': '141-78-6', 'Molecular Formula': 'C4H8O2'}, 
+                 6: {'Name': 'acetic acid', 'CAS': '64-19-7', 'Molecular Formula': 'C2H4O2'}, 
+                 7: {'Name': 'acetone', 'CAS': '67-64-1', 'Molecular Formula': 'C3H6O'}, 
+                 8: {'Name': '3-hydroxybutanol', 'CAS': '107-89-1', 'Molecular Formula': 'C4H8O2'}, 
+                 9: {'Name': 'butanone', 'CAS': '78-93-3', 'Molecular Formula': 'C4H8O'}, 
+                 10: {'Name': '1,3-butanediol', 'CAS': '107-88-0', 'Molecular Formula': 'C4H10O2'}, 
+                 11: {'Name': 'crotonaldehyde', 'CAS': '123-73-9', 'Molecular Formula': 'C4H6O'}, 
+                 12: {'Name': 'crotyl alcohol', 'CAS': '6117-91-5', 'Molecular Formula': 'C4H8O'}, 
+                 13: {'Name': '1,3-butadiene', 'CAS': '106-99-0', 'Molecular Formula': 'C4H6'}, 
+                 14: {'Name': 'butyraldehyde', 'CAS': '123-72-8', 'Molecular Formula': 'C4H8O'}, 
+                 15: {'Name': '1-butanol', 'CAS': '71-36-3', 'Molecular Formula': 'C4H10O'}, 
+                 16: {'Name': '1-butene', 'CAS': '106-98-9', 'Molecular Formula': 'C4H8'}, 
+                 17: {'Name': '(2E)-2-butene', 'CAS': '107-01-7', 'Molecular Formula': 'C4H8'}, 
+                 18: {'Name': 'isobutylene', 'CAS': '115-11-7', 'Molecular Formula': 'C4H8'}, 
+                 19: {'Name': 'carbon dioxide', 'CAS': '124-38-9', 'Molecular Formula': 'CO2'}, 
+                 20: {'Name': 'water', 'CAS': '7732-18-5', 'Molecular Formula': 'H2O'}}
+
+final_list = [{'Name': 'diethy ether', 'CAS': '60-29-7', 'Molecular Formula': 'C4H10O'}, 
+              {'Name': 'ethylene', 'CAS': '74-85-1', 'Molecular Formula': 'C2H4'}, 
+              {'Name': 'ethanol', 'CAS': '64-17-5', 'Molecular Formula': 'C2H6O'}, 
+              {'Name': 'ethoxythanol', 'CAS': '7518-70-9', 'Molecular Formula': 'C4H10O2'}, 
+              {'Name': 'acetaldehyde', 'CAS': '75-07-0', 'Molecular Formula': 'C2H4O'}, 
+              {'Name': 'ethyl acetate', 'CAS': '141-78-6', 'Molecular Formula': 'C4H8O2'}, 
+              {'Name': 'acetic acid', 'CAS': '64-19-7', 'Molecular Formula': 'C2H4O2'}, 
+              {'Name': 'acetone', 'CAS': '67-64-1', 'Molecular Formula': 'C3H6O'}, 
+              {'Name': '3-hydroxybutanol', 'CAS': '107-89-1', 'Molecular Formula': 'C4H8O2'},
+              {'Name': 'butanone', 'CAS': '78-93-3', 'Molecular Formula': 'C4H8O'}, 
+              {'Name': '1,3-butanediol', 'CAS': '107-88-0', 'Molecular Formula': 'C4H10O2'}, 
+              {'Name': 'crotonaldehyde', 'CAS': '123-73-9', 'Molecular Formula': 'C4H6O'}, 
+              {'Name': 'crotyl alcohol', 'CAS': '6117-91-5', 'Molecular Formula': 'C4H8O'}, 
+              {'Name': '1,3-butadiene', 'CAS': '106-99-0', 'Molecular Formula': 'C4H6'}, 
+              {'Name': 'butyraldehyde', 'CAS': '123-72-8', 'Molecular Formula': 'C4H8O'}, 
+              {'Name': '1-butanol', 'CAS': '71-36-3', 'Molecular Formula': 'C4H10O'}, 
+              {'Name': '1-butene', 'CAS': '106-98-9', 'Molecular Formula': 'C4H8'}, 
+              {'Name': '(2E)-2-butene', 'CAS': '107-01-7', 'Molecular Formula': 'C4H8'}, 
+              {'Name': 'isobutylene', 'CAS': '115-11-7', 'Molecular Formula': 'C4H8'}, 
+              {'Name': 'carbon dioxide', 'CAS': '124-38-9', 'Molecular Formula': 'CO2'}, 
+              {'Name': 'water', 'CAS': '7732-18-5', 'Molecular Formula': 'H2O'}]
+
+k_b = [1.380649*(10**23),           #	J/K Boltzmann constant (m**2 kg)/(s**2 K1)
        8.617333262145*(10**5),      #	eV/K
        1.380649*(10**16)]           #	erg/K
 
@@ -189,7 +259,7 @@ def z_tot(z_i, σ_i):
 def E_app(X_RC, E_t, n, θ_MASI, H_MASI_g):
     # n is the number of surface sites involved in the rate-determining step
     # H_MASI g is the enthalpy of formation of MASI from the gas phase reactants and products 
-    # θMASI is the surface coverage of the most abundant surface intermediate
+    # θ_MASI is the surface coverage of the most abundant surface intermediate
     v1a = [x*y for x, y in zip(X_RC, E_t)]
     v1 = sum(v1a)
     v2 = n*θ_MASI*H_MASI_g
@@ -203,7 +273,7 @@ def KIE(G_i_H_o, G_i_D, X_i, T, R=R_g[0]):
     return vf
 
 def r_overall(r_max_i, X_RC_i, β, θ_o=1, n=0):
-    # β = z1z2z3z4
+    # β = z1*z2*z3*z4
     # θ_o is the fraction of free surface sites
     r_ove = r_max_i*X_RC_i*(1.0 - β)*(θ_o**n)
     return r_ove
