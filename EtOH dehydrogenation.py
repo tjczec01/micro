@@ -12,15 +12,15 @@ E-mail: tjczec01@gmail.com
 
 # Data sources
 
-# database(
-#     thermoLibraries=['surfaceThermoPt111', 'primaryThermoLibrary', 'thermo_DFT_CCSDTF12_BAC','DFT_QCI_thermo'], # 'surfaceThermoPt' is the default. Thermo data is derived using bindingEnergies for other metals 
-#     reactionLibraries = [('Surface/CPOX_Pt/Deutschmann2006', False)], # when Ni is used change the library to Surface/Deutschmann_Ni 
-#     seedMechanisms = [],
-#     kineticsDepositories = ['training'],
-#     kineticsFamilies = ['surface','default'],
-#     kineticsEstimator = 'rate rules',
+database(
+    thermoLibraries=['surfaceThermoPt111', 'primaryThermoLibrary', 'thermo_DFT_CCSDTF12_BAC','DFT_QCI_thermo', "Klippenstein_Glarborg2016"], # 'surfaceThermoPt' is the default. Thermo data is derived using bindingEnergies for other metals 
+    reactionLibraries = [('Surface/CPOX_Pt/Deutschmann2006', False), ("TEOS", False)], # when Ni is used change the library to Surface/Deutschmann_Ni 
+    seedMechanisms = [],
+    kineticsDepositories = ['training'],
+    kineticsFamilies = ['surface','default'],
+    kineticsEstimator = 'rate rules',
 
-# )
+)
 
 
 # mgosio2 = 100.3887 # g/mol
@@ -31,41 +31,53 @@ E-mail: tjczec01@gmail.com
 # print(saf)
 
 
+
+#  https://doi.org/10.1002/cctc.202001007
+
+# MgO = [50.25, 50.80, 51.00] # Mg-O
+# Si = [20.3, 17.4, 20.3]
+# O = [60.8, 56.2, 59.6]
+# C = [2.2, 9.6, 6.4]
+
+# Mgavg = sum(MgO)/len(MgO)
+# Siavg = sum(Si)/len(Si)
+# Oavg = sum(O)/len(O)
+# Cavg = sum(C)/len(C)
+
 catalystProperties(
 bindingEnergies = {
-'H': (-2.479, 'eV/molecule'),
-'O': (-3.586, 'eV/molecule'),
-'C': (-6.750, 'eV/molecule'),
-'N': (-4.352, 'eV/molecule'),},
+'H': (50.30, 'eV/molecule'),
+'O': (50.68333333333334, 'eV/molecule'),
+'Si': (101.3, 'eV/molecule'),},
 surfaceSiteDensity=(1.2389652366524949e-08, 'mol/cm^2'),
 )
 
 # List of species
 species(
-	label='EtOH',
+	label='C2H6O',
 	reactive=True,
 	structure=InChI("InChI=1/C2H6O/c1-2-3/h3H,2H2,1H3"),
 )
 
 
 species(
-	label='Ethene',
+	label='C2H4',
 	reactive=True,
-	structure=InChI("InChI=1S/C2H4/c1-2/h1-2H2"),  # structure=SMILES("CC")
+	structure=SMILES("C=C"),  # structure=SMILES("CC")
 )
 
 
 species(
-	label='Acetaldehyde',
+	label='C2OH4',
 	reactive=True,
-	structure=SMILES("O=CC"),  # structure=SMILES("CC")
+	structure=SMILES("CC=O"),  # structure=SMILES("CC")
 )
 
 
 species(
-	label='1-Methoxypropan-2-ol',
+	label='1-Methoxypropan-2-ol',  # C4H10O2
 	reactive=True,
-	structure=SMILES("OC(OCC)C"),  # structure=SMILES("CC")
+	structure=SMILES("CC(O)COC"),  # structure=SMILES("CC")
 )
 
 species(
@@ -92,60 +104,84 @@ species(
     structure=adjacencyList("1 X u0"),
 )
 
-# Reaction systems
-simpleReactor(
-    temperature=(723,'K'),
-    pressure=(1.0,'atm'),
-    initialMoleFractions={
-        "EtOH": 1.0,
-    },
-    terminationConversion={
-        'EtOH': 0.1,
-    },
-    terminationTime=(28800,'s'),
-)
 
 surfaceReactor(
-    temperature=(1000,'K'),
-    initialPressure=(1.0, 'bar'),
+    temperature=(723, 'K'),
+    initialPressure=(1.0, 'atm'),
     initialGasMoleFractions={
-        "CH4": 1.0,
-        "O2": 0.0,
-        "CO2": 1.2,
-        "H2O": 1.2,
-        "H2": 0.0,
-        "CH3OH": 0.0,
+        "C2H6O": 1.0,
         "C2H4": 0.0,
+        "C2OH4": 0.0,
+        "1-Methoxypropan-2-ol": 0.0,
+        "Ethoxyethane": 0.0,
+        "H20": 0.0,
+        "H2": 0.0,
     },
     initialSurfaceCoverages={
         "site": 1.0,
     },
-    surfaceVolumeRatio=(1.e5, 'm^-1'),
-    terminationConversion = { "CH4":0.9,},
-    terminationTime=(0.01, 's'),
+    surfaceVolumeRatio=(1.0e5, 'm^-1'),
+    terminationConversion = {"C2H6O": 0.1,},
+    terminationTime=(28800.0, 's'),
 )
 
 
 simulator(
-    atol=1e-16,
-    rtol=1e-8,
+    atol=1e-18,
+    rtol=1e-12,
 )
 
 model(
     toleranceKeepInEdge=0.0,
-    toleranceMoveToCore=0.1,
+    toleranceMoveToCore=1e-6,
     toleranceInterruptSimulation=0.1,
     maximumEdgeSpecies=100000,
-    filterReactions=True,
 )
 
 options(
     units='si',
     generateOutputHTML=True,
-    generatePlots=False,
+    generatePlots=True, # Enable to make plots of core and edge size etc.. But takes a lot of the total runtime!
     saveEdgeSpecies=True,
     saveSimulationProfiles=True,
+    verboseComments=True,
 )
+
+
+# Reaction systems
+# simpleReactor(
+#     temperature=(723,'K'),
+#     pressure=(1.0,'atm'),
+#     initialMoleFractions={
+#         "EtOH": 1.0,
+#     },
+#     terminationConversion={
+#         'EtOH': 0.1,
+#     },
+#     terminationTime=(28800,'s'),
+# )
+
+
+# simulator(
+#     atol=1e-16,
+#     rtol=1e-8,
+# )
+
+# model(
+#     toleranceKeepInEdge=0.0,
+#     toleranceMoveToCore=0.1,
+#     toleranceInterruptSimulation=0.1,
+#     maximumEdgeSpecies=100000,
+#     filterReactions=True,
+# )
+
+# options(
+#     units='si',
+#     generateOutputHTML=True,
+#     generatePlots=False,
+#     saveEdgeSpecies=True,
+#     saveSimulationProfiles=True,
+# )
 
 # database(
 #     thermoLibraries = ['primaryThermoLibrary'],
@@ -193,35 +229,16 @@ options(
 #     terminationRateRatio=0.01
 # )
 
-simulator(
-    atol=1e-16,
-    rtol=1e-8,
-)
 
-model(
-    toleranceKeepInEdge=0.0,
-    toleranceMoveToCore=0.1,
-    toleranceInterruptSimulation=0.1,
-    maximumEdgeSpecies=100000,
-    filterReactions=True,
-)
-
-options(
-    units='si',
-    generateOutputHTML=True,
-    generatePlots=False,
-    saveEdgeSpecies=True,
-    saveSimulationProfiles=True,
-)
 # 5.2. 1,3-hexadiene pyrolysis
 # This example models the pyrolysis of 1,3-hexadiene and demonstrates the effect of turning on the pressure-dependence module within RMG.
 
 # Data sources
-database(
-    thermoLibraries = ['primaryThermoLibrary', 'GRI-Mech3.0'],
-    reactionLibraries = [],
-    seedMechanisms = [],
-    kineticsDepositories = ['training'], 
-    kineticsFamilies = 'default',
-    kineticsEstimator = 'rate rules',
-)
+# database(
+#     thermoLibraries = ['primaryThermoLibrary', 'GRI-Mech3.0'],
+#     reactionLibraries = [],
+#     seedMechanisms = [],
+#     kineticsDepositories = ['training'], 
+#     kineticsFamilies = 'default',
+#     kineticsEstimator = 'rate rules',
+# )
