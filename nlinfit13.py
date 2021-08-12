@@ -13,8 +13,8 @@ import scipy.optimize as optimize
 import matplotlib.pylab as plt
 import math
 
-for i in range(1, 7, 1):
-    print("dh{} = \nds{} = \ndg{} = ".format(i, i, i))
+# for i in range(1, 7, 1):
+#     print("dh{} = \nds{} = \ndg{} = ".format(i, i, i))
 
 def func(P, T, R, dh1, ds1, dg1, dh2, ds2, dg2, dh3, ds3, dg3, dh3t, ds3t, dg3t, dh4, ds4, dg4, dh5, ds5, dg5, dg5t, dh5t, ds5t, dh6, ds6, dg6):
     kB = 1.380662 * 10E23   #  m2 kg/s2 K1
@@ -30,16 +30,23 @@ def func(P, T, R, dh1, ds1, dg1, dh2, ds2, dg2, dh3, ds3, dg3, dh3t, ds3t, dg3t,
 
 
 
-def retoh(P, dh1, ds1, dg1, dh2, ds2, dg2, dh3t, ds3t, dg3t):
-    T = 723
-    kb = 1.380662 * 10E23   #  m2 kg/s2 K1
-    h = 6.626176 * 10E34  #  m2 kg/s
-    R = 1.987  #   cal/K mol
-    k1 = math.exp(ds1/R) * math.exp((-1*dh1)/(R*T))
-    k2 = math.exp(ds2/R) * math.exp((-1*dh2)/(R*T))
-    k3 = math.exp(ds3t/R) * math.exp((-1*dh3t)/(R*T))
-    
-    return ((((kb*T)/h)*(math.exp(ds3t/R) * math.exp((-1*dh3t)/(R*T)))) * math.exp(ds1/R) * math.exp((-1*dh1)/(R*T)) * math.exp(ds2/R) * math.exp((-1*dh2)/(R*T)) * P) / (1 + math.exp(ds1/R) * math.exp((-1*dh1)/(R*T)) * math.exp(ds2/R) * math.exp((-1*dh2)/(R*T)) * P)
+def ract(Pe, dh1, ds1, dg1, dh2, ds2, dg2, dh3t, ds3t, dg3t):
+    T = 723.15
+    To = 298.15
+    P = Pe * 1000
+    kb = 1.380662 * 10**(-23)   #  m2 kg/s2 K-1
+    h = 6.626176 * 10**(-34)  #  m2 kg/s
+    R = 1.987*1000  #   kcal/K mol
+    k1 = math.exp(ds1/R) * math.exp((-dh1)/(R*To))
+    k1g = math.exp((-dg1)/(To*R))
+    # print(k1, k1g)
+    k2 = math.exp(ds2/R) * math.exp((-dh2)/(R*To))
+    k2g = math.exp((-dg2)/(To*R))
+    print("K1: {}, K1G: {} | Difference {:.3} %".format(k1, k1g, abs((1 - k1/k1g) * 100)))
+    print("K2: {}, K2G: {} | Difference {:.3} %".format(k2, k2g, abs((1 - k2/k2g) * 100)))
+    k3 = ((kb*T)/h)*(math.exp(ds3t/R) * math.exp((-dh3t)/(R*To)))
+    # kb*t/ h [1/s]
+    return  (k3*k1*k2*P)/(1 + k1*k2*P) #((((kb*T)/h)*(math.exp(ds3t/R) * math.exp((-1*dh3t)/(R*T)))) * math.exp(ds1/R) * math.exp((-1*dh1)/(R*T)) * math.exp(ds2/R) * math.exp((-1*dh2)/(R*T)) * P) / (1 + math.exp(ds1/R) * math.exp((-1*dh1)/(R*T)) * math.exp(ds2/R) * math.exp((-1*dh2)/(R*T)) * P)
     
 
 def rety(P, dh1, ds1, dg1, dh2, ds2, dg2, dh5t, ds5t, dg5t):
@@ -56,10 +63,10 @@ def rety(P, dh1, ds1, dg1, dh2, ds2, dg2, dh5t, ds5t, dg5t):
 
 dh1 = -29.9
 ds1 = -26.8 
-dg1 = -10.5
+dg1 = 12.6  #-10.5
 dh2 = 5.1
 ds2 = 9.9
-dg2 = -3.0
+dg2 = -16.9  #-3.0
 dh3 = 30.8
 ds3 = 15.9
 dg3 = 19.1
@@ -79,6 +86,10 @@ dh6 = 9
 ds6 = 8.3
 dg6 = 1.7
 
+etohp = [1.396531653, 0.842796383, 1.120467481, 0.563504289, 0.981833673, 0.423245926, 1.922121144, 2.05261231, 2.161080277, 2.280107728, 2.404224886, 2.565626381, 1.922121144, 2.05261231, 2.161080277, 2.280107728, 2.404224886, 2.565626381, 1.922121144, 2.05261231, 2.161080277, 2.280107728, 2.404224886, 2.565626381, 1.922121144, 2.05261231, 2.161080277, 2.280107728, 2.404224886, 2.565626381, 5.25]
+totp = [96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 96.5266, 93.07922, 93.07922, 93.07922, 93.07922, 93.07922, 93.07922, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318, 89.6318]
+R_act = [ract(x, dh1, ds1, dg1, dh2, ds2, dg2, dh3t, ds3t, dg3t) for x in etohp]
+print(R_act)
 # def func(kd, p0, l0):
 #     return 0.5 * (-1 - ((p0 + l0)/kd) + np.sqrt(4 * (l0/kd) + (((l0 - p0)/kd) - 1)**2))
 
